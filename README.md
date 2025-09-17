@@ -115,7 +115,7 @@ Data delivery adalah proses fundamental pengiriman data antar sistem. Ini dibutu
 
 - **Komunikasi Frontend-Backend**: Memungkinkan antarmuka pengguna (frontend) untuk meminta (`request`) dan menerima (`response`) data dari server (backend).
 - **Integrasi API**: Menjadi jembatan komunikasi antara aplikasi Anda dengan layanan eksternal atau pihak ketiga (third-party services).
-- **Arsitektur Mi**croservices: Memfasilitasi komunikasi antar layanan independen yang menyusun sebuah platform besar.
+- **Arsitektur Microservices**: Memfasilitasi komunikasi antar layanan independen yang menyusun sebuah platform besar.
 
 Tanpa data delivery, komponen-komponen platform tidak dapat bertukar informasi dan tidak akan berfungsi.
 
