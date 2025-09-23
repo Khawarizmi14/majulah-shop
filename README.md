@@ -21,7 +21,7 @@ Mulai dengan membuat _virtual environment_ menggunakan `python -m venv env`. Tuj
 
 ### 3. Desain Model Data (`models.py`)
 
-Model `Product` dibuat dalam `main/models.py` dengan tipe data yang sesuai untuk setiap atributnya, seperti `CharField` untuk nama, `IntegerField` untuk harga, dan `TextField` untuk deskripsi. Setelah model didefinisikan, saya membuat file migrasi dengan `makemigrations` untuk mencatat perubahan skema, lalu menerapkannya ke database menggunakan `migrate`.
+Model `Product` dibuat dalam `main/models.py` dengan tipe data yang sesuai untuk setiap atributnya, seperti `CharField` untuk nama, `IntegerField` untuk harga, dan `TextField` untuk deskripsi. Setelah model didefinisikan, buat file migrasi dengan `makemigrations` untuk mencatat perubahan skema, lalu menerapkannya ke database menggunakan `migrate`.
 
 ### 4. Logika dan Tampilan (`views.py` & `template.html`)
 
@@ -114,7 +114,7 @@ Tutorial diberikan dengan sangat baik
 Data delivery adalah proses fundamental pengiriman data antar sistem. Ini dibutuhkan karena platform modern memiliki arsitektur terdistribusi. Fungsinya:
 
 - **Komunikasi Frontend-Backend**: Memungkinkan antarmuka pengguna (frontend) untuk meminta (`request`) dan menerima (`response`) data dari server (backend).
-- **Integrasi API**: Menjadi jembatan komunikasi antara aplikasi Anda dengan layanan eksternal atau pihak ketiga (third-party services).
+- **Integrasi API**: Menjadi jembatan komunikasi antara aplikasi dengan layanan eksternal atau pihak ketiga (third-party services).
 - **Arsitektur Microservices**: Memfasilitasi komunikasi antar layanan independen yang menyusun sebuah platform besar.
 
 Tanpa data delivery, komponen-komponen platform tidak dapat bertukar informasi dan tidak akan berfungsi.
@@ -149,7 +149,7 @@ Jika `is_valid()` mengembalikan `True`, maka data yang sudah divalidasi dan dibe
 
 ### Apa yang terjadi jika tidak dipakai?
 
-Seorang penyerang bisa memaksa browser pengguna yang sudah terautentikasi (login) untuk mengirimkan permintaan HTTP yang tidak diinginkan ke aplikasi Anda. Karena permintaan tersebut dikirim bersama cookie sesi yang valid, aplikasi Anda akan menganggapnya sebagai tindakan yang sah dari pengguna.
+Seorang penyerang bisa memaksa browser pengguna yang sudah terautentikasi (login) untuk mengirimkan permintaan HTTP yang tidak diinginkan ke aplikasi. Karena permintaan tersebut dikirim bersama cookie sesi yang valid, aplikasi akan menganggapnya sebagai tindakan yang sah dari pengguna.
 
 ### Bagaimana `csrf_token` melindunginya?
 
@@ -164,13 +164,13 @@ Penyerang tidak memiliki akses ke token rahasia ini, sehingga setiap upaya pemal
 
 ### 1. Format XML & JSON
 
-Modifikasi `main/views.py` dan tambah fungsi `show_json`, `show_xml`, `show_json_by_id`, `show_xml_by_id`. Kode ini menggunakan serializer bawaan Django untuk mengubah QuerySet menjadi format JSON dan XML.
+Modifikasi `main/views.py` dan tambah fungsi `show_json`, `show_xml`, `show_json_by_id`, `show_xml_by_id`. Kode ini menggunakan `serializers` bawaan Django untuk mengubah QuerySet menjadi format JSON dan XML.
 
 ### 2. Routing URL
 
 Modifikasi `main/urls.py` dan tambah routing untuk setiap fungsi view yang baru dibuat.
 
-```
+```python
 path('xml/', show_xml, name='show_xml'),
 path('json/', show_json, name='show_json'),
 path('xml/<str:product_id>/', show_xml_by_id, name='show_xml_by_id'),
@@ -191,10 +191,76 @@ Buat file template `product_detail.html` untuk menampilkan semua detail dari sat
 
 ## Postman
 
-https://drive.google.com/drive/u/2/folders/1U_NDSyN_DfNs5Xm1y-IDQDTC6C_KTIlJ
+https://drive.google.com/drive/folders/1U_NDSyN_DfNs5Xm1y-IDQDTC6C_KTIlJ?usp=drive_link
 
 ## Feedback
 
 Tutorial diberikan dengan sangat baik
+
+</details>
+
+<details>
+<summary>Tugas Individu 4</summary>
+
+## Apa itu Django AuthenticationForm?
+
+`AuthenticationForm` adalah _form_ bawaan Django untuk menangani _login_ pengguna, yang secara _default_ memvalidasi _field_ **username** dan **password**. Kelebihannya adalah sangat **praktis**, **aman**, dan **terintegrasi** langsung dengan sistem autentikasi Django, sehingga mempercepat pengembangan. Namun, kekurangannya adalah **kurang fleksibel** karena secara _default_ terikat pada sistem login username/password tradisional serta **pesan error yang generik** sehingga mungkin kurang informatif bagi pengguna.
+
+---
+
+## Apa perbedaan antara autentikasi dan otorisasi?
+
+**Autentikasi** adalah proses verifikasi identitas untuk menjawab pertanyaan **"Siapa Anda?"** (misalnya, saat _login_ dengan _password_). Sementara itu, **otorisasi** adalah proses menentukan hak akses setelah identitas terverifikasi, untuk menjawab **"Apa yang boleh Anda lakukan?"** (misalnya, menentukan apakah seorang pengguna boleh menghapus artikel). Django mengimplementasikan **autentikasi** melalui `django.contrib.auth` yang mengelola `User` dan sesi, sedangkan **otorisasi** diimplementasikan melalui sistem _permissions_ dan _groups_, serta _decorator_ seperti `@login_required` dan `@permission_required`.
+
+---
+
+## Apa kelebihan dan kekurangan session dan cookies?
+
+**Cookies** menyimpan data langsung di _browser_ klien, sehingga **meringankan beban _server_** tetapi **tidak aman** untuk data sensitif karena bisa dibaca atau diubah, serta memiliki **kapasitas terbatas** (~4 KB). Sebaliknya, **session** menyimpan data di sisi _server_ dan hanya menempatkan sebuah ID unik di _cookie_ klien. Hal ini membuatnya **jauh lebih aman** dan mampu menyimpan data lebih besar, namun **menambah beban _server_** dan bisa menjadi kompleks untuk dikelola dalam arsitektur multi-_server_.
+
+---
+
+## Apakah penggunaan cookies aman dan bagaimana Django menanganinya?
+
+Tidak, _cookies_ **tidak aman secara _default_** dan rentan terhadap serangan seperti **Cross-Site Scripting (XSS)** dan **Cross-Site Request Forgery (CSRF)**. Django meningkatkan keamanan secara signifikan dengan beberapa cara: menyediakan **perlindungan CSRF** bawaan yang wajib menggunakan `csrf_token`, menggunakan _session_ di sisi _server_ sehingga data sensitif tidak terekspos, dan menerapkan atribut _cookie_ aman seperti `HttpOnly` untuk memblokir akses dari JavaScript dan `Secure` untuk memastikan _cookie_ hanya dikirim melalui koneksi HTTPS.
+
+## Implementasi
+
+### 1. Fungsi registrasi, login, dan logout
+
+Modifikasi `main/views.py` dan tambah fungsi `register`, `login_user`, dan `logout_user`. Kode ini menggunakan `UserCreationForm` untuk form registrasi dan `AuthenticationForm` untuk form autentikasi. Restriksi akses halaman main dan Product detail menggunakan decorator `login_required`. Simpan cookie bernama `last_login` pada saat login di fungsi `login_user` dan hapus cookie pada saat logout di fungsi `logout_user`.
+
+Modifikasi `main/urls.py` dan tambah routing untuk setiap fungsi view yang baru dibuat.
+
+```python
+path('register/', register, name='register'),
+path('login/', login_user, name='login'),
+path('logout/', logout_user, name='logout'),
+```
+
+### 2. Menghubungkan model Product dengan User
+
+Modifikasi `main/models.py` dan tambah atribut `user` di class Product.
+
+```python
+user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+```
+
+Buat file migrasi dengan `makemigrations` untuk mencatat perubahan skema, lalu menerapkannya ke database menggunakan `migrate`. Selanjutnya, pada fungsi `add_product` di `main/views.py`, ambil data user yang menambahkan product.
+
+```python
+if form.is_valid() and request.method == "POST":
+    product_entry = form.save(commit = False)
+    product_entry.user = request.user
+    product_entry.save()
+```
+
+### 3. Membuat dua akun pengguna dengan masing-masing tiga dummy data
+
+Jalankan server dengan _command_ `python manage.py runserver`, buka `http://localhost:8000/`, kemudian buat dua akun dengan masing-masing tiga data
+
+### 4. Menampilkan detail informasi pengguna yang _logged in_ dan menerapkan cookies
+
+Untuk menampilkan nama pengguna yang sedang _logged in_, gunakan `'name': request.user.username`. Untuk menampilkan waktu _login_ terakhir user dari _cookies_, gunakan `'last_login': request.COOKIES.get('last_login', 'Never')`. Kemudian, tambahkan ke dalam _context dictionary_ pada fungsi `show_main` di dalam file `main/views.py`.
 
 </details>
