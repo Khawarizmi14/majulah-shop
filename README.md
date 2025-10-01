@@ -264,3 +264,56 @@ Jalankan server dengan _command_ `python manage.py runserver`, buka `http://loca
 Untuk menampilkan nama pengguna yang sedang _logged in_, gunakan `'name': request.user.username`. Untuk menampilkan waktu _login_ terakhir user dari _cookies_, gunakan `'last_login': request.COOKIES.get('last_login', 'Never')`. Kemudian, tambahkan ke dalam _context dictionary_ pada fungsi `show_main` di dalam file `main/views.py`.
 
 </details>
+
+<details>
+<summary>Tugas Individu 5</summary>
+
+## Prioritas CSS Selector
+
+Urutan prioritas atau **spesifisitas** CSS selector ditentukan dari yang paling spesifik hingga yang paling umum. Prioritas tertinggi adalah deklarasi `!important` yang akan menimpa semua aturan lainnya. Setelah itu, urutan berikutnya adalah **inline style** (atribut `style` di dalam tag HTML), diikuti oleh **ID selector** (`#id`), lalu **class selector** (`.class`), **attribute selector** (`[type="text"]`), dan **pseudo-class** (`:hover`). Prioritas terendah dimiliki oleh **element selector** (misalnya `p`, `div`) dan **universal selector** (`*`). Jika dua selector memiliki spesifisitas yang sama, maka aturan yang ditulis paling akhir di dalam file CSS akan diterapkan.
+
+## Pentingnya Responsive Design
+
+**Responsive design** menjadi sangat penting karena memastikan sebuah aplikasi web dapat memberikan pengalaman pengguna (UX) yang optimal di berbagai ukuran layar perangkat, mulai dari desktop, tablet, hingga ponsel. Dengan semakin banyaknya pengguna yang mengakses internet melalui perangkat mobile, situs yang tidak responsif akan sulit dinavigasi, membuat pengguna frustrasi, dan berpotensi menurunkan peringkat SEO. Sebagai contoh, situs berita seperti **Detik.com** sudah menerapkan desain responsif; tampilannya berubah dari beberapa kolom di desktop menjadi satu kolom yang mudah di-_scroll_ di ponsel. Sebaliknya, situs web pemerintah yang sudah tua seringkali **belum responsif**; di ponsel, tampilannya hanya versi kecil dari versi desktop, memaksa pengguna untuk melakukan _pinch-and-zoom_ agar dapat membaca konten, sehingga sangat tidak praktis.
+
+## Perbedaan Margin, Border, dan Padding
+
+Ketiga properti ini adalah bagian dari konsep **CSS Box Model** yang mengatur ruang di sekitar elemen HTML.
+
+- **Padding** adalah ruang transparan di **dalam** border, yaitu antara konten elemen (teks/gambar) dengan bordernya. Ini seperti bantalan di dalam sebuah kotak.
+- **Border** adalah garis yang **mengelilingi** padding dan konten. Border ini bisa diatur ketebalan, gaya (misalnya solid, dashed), dan warnanya.
+- **Margin** adalah ruang transparan di **luar** border, yang berfungsi untuk menciptakan jarak antara elemen tersebut dengan elemen lainnya.
+
+Ketiganya diimplementasikan dalam CSS menggunakan properti `padding`, `border`, dan `margin`. Contoh: `div { padding: 15px; border: 1px solid black; margin: 20px; }`.
+
+## Konsep Flexbox dan Grid Layout
+
+**Flexbox** dan **Grid** adalah dua model tata letak (layout) modern di CSS untuk mengatur posisi elemen secara efisien.
+
+- **Flexbox** (Flexible Box Layout) adalah model tata letak **satu dimensi**, yang dirancang untuk mengatur item dalam satu baris atau satu kolom. Kegunaan utamanya adalah untuk mendistribusikan ruang di antara item dan menyelaraskannya dengan mudah. Ini sangat ideal untuk komponen skala kecil seperti menu navigasi, barisan kartu produk, atau menengahkan elemen secara vertikal dan horizontal.
+- **Grid Layout** adalah model tata letak **dua dimensi**, yang mampu mengontrol baris dan kolom secara bersamaan. Kegunaannya adalah untuk membuat tata letak halaman yang kompleks dan terstruktur, seperti layout majalah atau dasbor aplikasi web yang memiliki header, sidebar, konten utama, dan footer. Secara sederhana, Flexbox untuk mengatur konten di dalam satu baris/kolom, sedangkan Grid untuk mengatur layout halaman secara keseluruhan.
+
+## Implementasi
+
+### 1.Fungsi Delete dan Edit
+
+Modifikasi `main/views.py` dan tambah fungsi `edit_product` dan `delete_product`. Tambah routing ke setiap fungsi yang dibuat dengan memodifikasi `main/urls.py`
+
+```python
+path('product/<str:id>/edit', edit_product, name='edit_product'),
+path('product/<str:id>/delete', delete_product, name='delete_product'),
+```
+
+### 2. Kustomisasi Desain
+
+Pada website ini, _framework_ CSS yang digunakan adalah **Tailwind**. Keputusan ini secara fundamental memengaruhi cara desain website dibangun, dari estetika hingga performa, dengan mengadopsi filosofi **utility-first**.
+
+Pilihan untuk menggunakan Tailwind membawa beberapa keuntungan signifikan:
+
+1. Desain yang Unik dan Kustom: Website ini tidak akan terlihat seperti "situs template". Setiap elemen visual dirancang secara spesifik, memberikan identitas yang kuat dan unik.
+2. Responsivitas yang Intuitif: Tailwind menggunakan prefix seperti md: dan lg: untuk mengatur gaya pada ukuran layar yang berbeda, membuat desain yang adaptif di berbagai perangkat menjadi lebih mudah dan logis.
+3. Performa Optimal: Saat proses build, Tailwind secara otomatis memindai semua file dan hanya menyertakan CSS yang benar-benar digunakan. Hasilnya adalah file CSS akhir yang sangat kecil, membuat website memuat lebih cepat.
+
+Secara singkat, penggunaan Tailwind pada website ini berarti setiap detail tampilan telah dirakit dengan sengaja untuk menciptakan pengalaman yang unik, cepat, dan modern.
+
+</details>

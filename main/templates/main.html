@@ -1,53 +1,92 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>Majulah Shop - Premium Sportswear</title>
+{% endblock meta %}
+
 {% block content %}
-<h1>{{ project }}</h1>
+{% include 'navbar.html' %}
 
-<h5>Name:</h5>
-<p>{{ name }}</p>
-<p></p>
-<h5>Class:</h5>
-<p>{{ class }}</p>
+<div 
+  class="relative bg-gray-800 bg-cover bg-center"
+  style="background-image: url('https://images.unsplash.com/photo-1552667466-07770ae110d0?auto=format&fit=crop&q=80&w=2670');">
+  
+  <div class="absolute inset-0 bg-black bg-opacity-60"></div>
 
-<hr />
-
-<a href="{% url 'main:add_product' %}">
-  <button>+ Add Product</button>
-</a>
-
-<a href="{% url 'main:logout' %}">
-  <button>Logout</button>
-</a>
-
-<h5>Sesi terakhir login: {{ last_login }}</h5>
-
-<a href="?filter=all">
-    <button type="button">All Product</button>
-</a>
-<a href="?filter=my">
-    <button type="button">My Product</button>
-</a> 
-
-{% if not product_list %}
-<p>Belum ada data product.</p>
-
-{% else %}
-{% for product in product_list %}
-<div>
-  <h2><a href="{% url 'main:show_product' product.id %}">{{ product.name }}</a></h2>
-
-  {% if product.thumbnail %}
-  <a href="{% url 'main:show_product' product.id %}">
-    <img src="{{ product.thumbnail }}" alt="product thumbnail" width="300" />
-  </a>
-  <br /><br />
-  {% endif %}
-
-  <p>Price: {{ product.price }}</p>
-  <p>Description: {{ product.description|truncatewords:25 }}...</p>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center text-white">
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">
+      <span class="block">Gear Up for Glory</span>
+    </h1>
+    <p class="mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-gray-300">
+      Your one-stop destination for premium football kits, boots, and sportswear.
+    </p>
+    <div class="mt-8">
+      <a href="#products" class="inline-block bg-red-600 text-white font-bold text-lg px-8 py-4 rounded-lg shadow-lg transition-transform duration-300 hover:bg-red-700 hover:scale-105">
+        Shop Now
+      </a>
+    </div>
+  </div>
 </div>
 
-{% endfor %}
+<div id="products" class="bg-gray-100 w-full">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
-{% endif %}
+    <div class="mb-12">
+      <div class="sm:flex sm:items-center sm:justify-between">
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900">Explore the Collection</h2>
+          <p class="mt-2 text-base text-gray-600">Find the latest drops and essential gear.</p>
+        </div>
+        
+        <div class="hidden sm:flex mt-4 sm:mt-0 space-x-3">
+          <a href="?" class="{% if request.GET.filter == 'all' or not request.GET.filter %} bg-red-600 text-white{% else %}bg-white text-gray-700 border border-gray-300 hover:bg-gray-200{% endif %} px-4 py-2 rounded-md font-medium transition-colors">
+            All Products
+          </a>
+          <a href="?filter=my" class="{% if request.GET.filter == 'my' %} bg-red-600 text-white{% else %}bg-white text-gray-700 border border-gray-300 hover:bg-gray-200{% endif %} px-4 py-2 rounded-md font-medium transition-colors">
+            My Products
+          </a>
+        </div>
+      </div>
 
+      <div class="mt-6 p-4 bg-white rounded-lg border border-gray-200 sm:flex sm:items-center sm:justify-between">
+        {% if user.is_authenticated %}
+          <div class="text-sm text-gray-600 mb-4 sm:mb-0">
+            Your last login was on {{ last_login }}
+          </div>
+        {% endif %}
+        <div class="flex sm:hidden space-x-3">
+          <a href="?" class="flex-1 text-center {% if request.GET.filter == 'all' or not request.GET.filter %} bg-red-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors">
+            All
+          </a>
+          <a href="?filter=my" class="flex-1 text-center {% if request.GET.filter == 'my' %} bg-red-600 text-white{% else %}bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors">
+            My Products
+          </a>
+        </div>
+      </div>
+    </div>
+
+
+    {% if not product_list %}
+      <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+        <div class="w-24 h-24 mx-auto mb-4 text-red-300">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-full h-full">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>              
+        </div>
+        <h3 class="text-xl font-medium text-gray-900 mb-2">No Products to Display</h3>
+        <p class="text-gray-500 mb-6">It looks empty in here. Be the first to add a product!</p>
+        <a href="{% url 'main:add_product' %}" class="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors shadow-sm">
+          Add a New Product
+        </a>
+      </div>
+    {% else %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for product in product_list %}
+          {% include 'card_product.html' with product=product %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
 {% endblock content %}
