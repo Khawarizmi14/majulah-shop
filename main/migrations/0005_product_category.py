@@ -6,15 +6,10 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0004_auto_20251007_2250'),
+        ('main', '0002_product_user_alter_product_is_featured'),
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name='product',
-            old_name='seller',
-            new_name='user',
-        ),
         migrations.AlterField(
             model_name='product',
             name='category',
