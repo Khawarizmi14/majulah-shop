@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0005_rename_seller_product_user_alter_product_category'),
+        ('main', '0005_product_category'),
     ]
 
     operations = [
