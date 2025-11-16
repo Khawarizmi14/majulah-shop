@@ -14,9 +14,69 @@ from django.views.decorators.http import require_POST
 
 import datetime
 import json
+import requests
 
 from main.forms import ProductForm
 from main.models import Product
+
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+        }
+        
+        # Fetch image from external source
+        response = requests.get(image_url, headers=headers, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        if response.status_code == 200:
+            # Return the image with proper content type
+            return HttpResponse(
+                response.content,
+                content_type=response.headers.get('Content-Type', 'image/jpeg')
+            )
+        else:
+            # If the external site returned an error (404, 403, etc.), 
+            # we return a 404 Not Found to the Flutter app.
+            return HttpResponse('Image not found or access denied', status=404)
+    except requests.RequestException as e:
+        print("\n--- PROXY IMAGE CRASH ---")
+        print(f"Failed to fetch: {image_url}")
+        print(f"The error was: {e}")
+        print("-------------------------\n")
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+
+
+@csrf_exempt
+def add_product_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = strip_tags(data.get("name", ""))  # Strip HTML tags
+        price = data.get("price", 0)
+        description = strip_tags(data.get("description", ""))  # Strip HTML tags
+        thumbnail = data.get("thumbnail", "")
+        category = data.get("category", "")
+        is_featured = data.get("is_featured", False)
+        
+        new_product = Product(
+            user=request.user,  
+            name=name,
+            price=price,
+            description=description,
+            thumbnail=thumbnail,
+            category=category,
+            is_featured=is_featured,
+        )
+        new_product.save()
+        
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
 
 # Create your views here.
 @login_required(login_url='/login')
@@ -94,10 +154,9 @@ def show_json(request):
     data = []
     for product in products:
         data.append({
-            "pk": str(product.pk), # UUID perlu diubah jadi string
-            "fields": {
-                "user": product.user.id,
-                "username": product.user.username,
+                'id': str(product.id),
+                "user": product.user.id if product.user else None,
+                "username": product.user.username if product.user else None,
                 "name": product.name,
                 "price": product.price,
                 "description": product.description,
@@ -105,18 +164,16 @@ def show_json(request):
                 "thumbnail": product.thumbnail,
                 "is_featured": product.is_featured,
             }
-        })
+        )
     return JsonResponse(data, safe=False)
 
 def show_json_by_id(request, id):
     try:
         product = Product.objects.get(pk=id)
         data = [{
-            "pk": str(product.pk),
-            "model": "main.product",
-            "fields": {
-                "user": product.user.id,
-                "username": product.user.username,
+                "id": str(product.id),
+                "user": product.user.id if product.user else None,
+                "username": product.user.username if product.user else None,
                 "name": product.name,
                 "price": product.price,
                 "description": product.description,
@@ -124,7 +181,7 @@ def show_json_by_id(request, id):
                 "thumbnail": product.thumbnail,
                 "is_featured": product.is_featured,
             }
-        }]
+        ]
         return JsonResponse(data, safe=False)
     except Product.DoesNotExist:
         return JsonResponse({"status": "error", "message": "Product not found"}, status=404)

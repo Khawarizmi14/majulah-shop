@@ -3,9 +3,14 @@ from main.views import show_main, add_product, show_product, edit_product, delet
 from main.views import show_xml, show_json, show_xml_by_id, show_json_by_id
 from main.views import register, login_user, logout_user, login_ajax, register_ajax
 from main.views import add_product_ajax, delete_product_ajax
+from main.views import add_product_flutter, proxy_image
+
 app_name = 'main'
 
 urlpatterns = [
+    path('proxy-image/', proxy_image, name='proxy_image'),
+    path('create-flutter/', add_product_flutter, name='add_product_flutter'),
+
     path('', show_main, name='show_main'),
     path('add-product/', add_product, name='add_product'),
     path('product/<uuid:id>', show_product, name='show_product'),
